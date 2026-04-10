@@ -1,0 +1,68 @@
+@font-face {
+  font-family: "Cooper Hewitt";
+  src: url("fonts/CooperHewitt-Book.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: #49AAFF;
+  color: #fff;
+  font-family: "Cooper Hewitt", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 400;
+  font-size: 133px;
+  line-height: 115px;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  min-height: 100vh;
+  padding: 30px 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+main { flex: 0 0 auto; }
+
+.statement {
+  margin: 0;
+  white-space: pre-line;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Responsive — inferred, not from Figma */
+@media (max-width: 1440px) {
+  body {
+    font-size: 9.23vw;   /* 133 / 1440 */
+    line-height: 7.99vw; /* 115 / 1440 */
+    padding: 2.08vw 0.55vw;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 44px;
+    line-height: 38px;
+    padding: 14px 6px;
+  }
+  footer { flex-wrap: wrap; }
+}
