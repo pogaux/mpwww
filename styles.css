@@ -6,63 +6,104 @@
   font-display: swap;
 }
 
-* { box-sizing: border-box; }
+@layer reset, tokens, layout, components;
 
-html, body { margin: 0; padding: 0; }
-
-body {
-  background: #49AAFF;
-  color: #fff;
-  font-family: "Cooper Hewitt", "Helvetica Neue", Arial, sans-serif;
-  font-weight: 400;
-  font-size: 133px;
-  line-height: 115px;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
-  min-height: 100vh;
-  padding: 30px 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
+@layer reset {
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { -webkit-font-smoothing: antialiased; }
 }
 
-main { flex: 0 0 auto; }
+@layer tokens {
+  :root {
+    --bg: #49AAFF;
+    --fg: #FFFFFF;
+    --font-stack: "Cooper Hewitt", "Helvetica Neue", Arial, sans-serif;
 
-.statement {
-  margin: 0;
-  white-space: pre-line;
-}
+    /* Fluid type: 44px floor → 133px ceiling, hitting 133px exactly at 1440px viewport.
+       9.236vw = 133/1440. Clamp floors it at 44px below ~476px. */
+    --statement-size: clamp(2.75rem, 9.236vw, 8.3125rem);
+    --statement-leading: clamp(2.375rem, 7.986vw, 7.1875rem);
 
-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-footer a {
-  color: inherit;
-  text-decoration: none;
-}
-
-/* Responsive — inferred, not from Figma */
-@media (max-width: 1440px) {
-  body {
-    font-size: 9.23vw;   /* 133 / 1440 */
-    line-height: 7.99vw; /* 115 / 1440 */
-    padding: 2.08vw 0.55vw;
+    /* Frame padding: 30px vertical / 8px horizontal at 1440, with sane floors. */
+    --pad-block: clamp(0.875rem, 2.083vw, 1.875rem);
+    --pad-inline: clamp(0.375rem, 0.556vw, 0.5rem);
   }
 }
 
-@media (max-width: 480px) {
+@layer layout {
   body {
-    font-size: 44px;
-    line-height: 38px;
-    padding: 14px 6px;
+    min-block-size: 100dvh;
+    padding: var(--pad-block) var(--pad-inline);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--pad-block);
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 var(--statement-size) / var(--statement-leading) var(--font-stack);
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
-  footer { flex-wrap: wrap; }
+
+  main { flex: 0 0 auto; }
+
+  footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 0 1ch;
+  }
+}
+
+@layer components {
+  .statement {
+    margin: 0;
+    white-space: pre-line;
+  }
+
+  /* Words are atomic for line-breaking; letters inside animate without
+     affecting where lines wrap. */
+  .statement .word {
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .statement .ch {
+    opacity: 1;
+    transition: opacity 180ms ease var(--d, 0ms);
+  }
+
+  .statement.is-leaving .rest .ch {
+    opacity: 0;
+    transition: opacity 120ms ease;
+    transition-delay: 0ms;
+  }
+
+  .statement.is-entering .rest .ch {
+    opacity: 0;
+    transition: none;
+  }
+
+  footer a {
+    color: inherit;
+    text-decoration: none;
+    border-radius: 2px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
