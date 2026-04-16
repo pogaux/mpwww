@@ -1,19 +1,19 @@
 const statements = [
   "Designs digital tools and experiences for people. Mixing research and application.",
-  "Digital Product Design\nUser Experience\nResearch\nVisuals",
-  "Did research on telepresence, virtual reality for clinical training and augmented reality for surgery",
-  "Prefers pen and paper, then AI."
+  "Digital Product Design\nUser Experience\nXR Interaction\nResearch",
+  "Statement 3",
+  "Statement 4"
 ];
 
-const TOTAL_MS    = 360;
+const TOTAL_MS    = 600;
 const FADE_OUT_MS = 120;
 const LETTER_MS   = 180;
 const MAX_STAGGER = 9;
 
 const prefersReducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const el       = document.getElementById("statement");
-const portrait = document.getElementById("portrait");
+const el        = document.getElementById("statement");
+const portraits = document.querySelectorAll(".portrait[data-statement]");
 
 
 function buildFragment(text, getDelay) {
@@ -41,14 +41,36 @@ function buildFragment(text, getDelay) {
   return frag;
 }
 
-function setPortrait(index) {
-  portrait.hidden = index !== 0;
+function setPortraitInstant(index) {
+  portraits.forEach(fig => {
+    const match = fig.dataset.statement === String(index);
+    fig.hidden = !match;
+    fig.classList.toggle("is-visible", match);
+    fig.classList.remove("is-entering");
+  });
+}
+
+function fadeOutPortraits() {
+  portraits.forEach(fig => fig.classList.remove("is-visible"));
+}
+
+function fadeInPortrait(index) {
+  portraits.forEach(fig => {
+    const match = fig.dataset.statement === String(index);
+    fig.hidden = !match;
+    if (match) {
+      fig.classList.add("is-entering");
+      void fig.offsetWidth;
+      fig.classList.remove("is-entering");
+      fig.classList.add("is-visible");
+    }
+  });
 }
 
 function renderInstant(index) {
   el.textContent = "";
   el.appendChild(buildFragment(statements[index], () => 0));
-  setPortrait(index);
+  setPortraitInstant(index);
 }
 
 let animToken = 0;
@@ -61,6 +83,7 @@ function swap(index) {
 
   const token = ++animToken;
   el.classList.add("is-leaving");
+  fadeOutPortraits();
 
   setTimeout(() => {
     if (token !== animToken) return;
@@ -72,7 +95,7 @@ function swap(index) {
 
     el.textContent = "";
     el.appendChild(buildFragment(text, (idx) => idx * stagger));
-    setPortrait(index);
+    fadeInPortrait(index);
 
     el.classList.remove("is-leaving");
     el.classList.add("is-entering");

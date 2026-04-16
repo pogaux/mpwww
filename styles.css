@@ -53,6 +53,7 @@
     top: calc(var(--pad) + 1em + clamp(0.5rem, 1.389vw, 1.25rem));
     left: var(--pad);
     right: var(--pad);
+    max-width: 70%;
     font-weight: 300;
     white-space: pre-line;
     z-index: 2;
@@ -70,17 +71,20 @@
     z-index: 1;
     container-type: size;
   }
-  .portrait video {
+  .portrait video,
+  .portrait img {
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 50%;
-    /* Cover the frame: take the larger of the two aspect-preserving fits
-       so one axis overflows and gets cropped. */
-    width: max(100cqw, calc(100cqh * 16 / 9));
-    height: max(100cqh, calc(100cqw * 9 / 16));
-    transform: translate(-50%, -50%);
+    height: 100cqh;
+    width: auto;
+    transform: translateX(-50%);
+    object-fit: contain;
   }
-  .portrait[hidden] { display: none; }
+  .portrait[hidden] { display: block; opacity: 0; pointer-events: none; }
+  .portrait { transition: opacity 120ms ease; }
+  .portrait.is-entering { opacity: 0; transition: none; }
+  .portrait.is-visible { opacity: 1; }
 
   footer {
     position: absolute;
@@ -148,6 +152,7 @@
 
     .statement {
       top: calc(var(--pad) + 1em + 5px);
+      max-width: none;
       font-weight: 300;
     }
 
@@ -158,11 +163,12 @@
       bottom: 52px;
       width: auto;
       height: auto;
-      aspect-ratio: 1 / 1;
+      aspect-ratio: 1;
     }
     .portrait video {
-      width: max(100cqw, 100cqh);
-      height: max(100cqh, 100cqw);
+      width: 100cqw;
+      height: 100cqw;
+      object-fit: cover;
     }
 
     footer {
